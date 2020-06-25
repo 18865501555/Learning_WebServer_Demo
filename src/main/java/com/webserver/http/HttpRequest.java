@@ -35,7 +35,7 @@ public class HttpRequest {
      * 实例化完毕后，该对象即表示客户端发送过来的请求内容了
      * @param socket
      */
-    public HttpRequest(Socket socket){
+    public HttpRequest(Socket socket) throws EmptyRequestException {
         System.out.println("HttpRequest:开始解析请求...");
         this.socket = socket;
         /*
@@ -44,13 +44,15 @@ public class HttpRequest {
         2：解析消息头
         3：解析消息正文
          */
-
+        parseRequestLine();
+        parseHeaders();
+        parseContent();
         System.out.println("HttpRequest:解析请求完毕!");
     }
     /**
      * 解析请求行
      */
-    private void parseRequestLine(){
+    private void parseRequestLine() throws EmptyRequestException {
         System.out.println("HttpRequest:开始解析请求行...");
         /*
         通过socket获取的输入流读取客户端发送过来的请求内容中
@@ -60,15 +62,27 @@ public class HttpRequest {
          */
         try {
             String line = readLine();
-            System.out.println("请求行:"+line);
+            //如果请求行第一行就是空字符串，说明是空请求
+            if (line.isEmpty()){
+                throw new EmptyRequestException();
+            }
+            System.out.println("请求行:" + line);
 
             String[] data = line.split("\\s");
             method = data[0];
             uri = data[1];
             protocol = data[2];
+        } catch (EmptyRequestException e){
+            //如果是空请求异常，对外抛出给构造方法
+            throw e;
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("method:"+method);
+        System.out.println("uri:"+uri);
+        System.out.println("protocol:"+protocol);
+
+        System.out.println("HttpRequest:解析请求行完毕!");
     }
     private void parseHeaders(){
         System.out.println("HttpRequest:开始解析消息头...");

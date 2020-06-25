@@ -1,5 +1,7 @@
 package com.webserver.core;
 
+import com.webserver.http.HttpRequest;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
@@ -23,19 +25,8 @@ public class ClientHandler implements Runnable{
         try {
             System.out.println("ClientHandler:开始处理...");
             //测试读取客户端发送过来的请求的内容
-            InputStream in = socket.getInputStream();
-            int d = 0;
-            StringBuilder builder = new StringBuilder();
-            while ((d=in.read())!=-1){
-                char c = (char) d;
-                //上一次读取若是回车符并且本次读取的是换行符就停止
-                if (builder.length()!=0 && builder.charAt(builder.length()-1)==13 && c==10){
-                    break;
-                }
-                builder.append(c);
-            }
-            String line = builder.toString().trim();
-            System.out.println(line);
+            System.out.println("ClientHandler:解析请求");
+            HttpRequest request = new HttpRequest(socket);
 
             //1解析请求
 
@@ -44,7 +35,7 @@ public class ClientHandler implements Runnable{
             //3响应客户端
 
             System.out.println("ClientHandler:处理完毕!");
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             //断开连接（HTTP1.0协议要求，一问一答后断开连接）

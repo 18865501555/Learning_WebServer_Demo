@@ -5,6 +5,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author orange
@@ -15,8 +18,12 @@ public class HttpResponse {
     //状态代码默认为200，因为大部分响应都能正确
     private int statusCode = 200;
     private String statusReson = "OK";
-    //响应头相关信息
-
+    /*
+    响应头相关信息
+    存放所有要发送的响应头
+    key响应头名字，value响应头的值
+     */
+    private Map<String,String> headers = new HashMap<>();
     //响应正文相关信息
     private File entity;
     private Socket socket;
@@ -68,14 +75,15 @@ public class HttpResponse {
     private void sendHeaders(){
         System.out.println("HttpResponse:开始发送响应头...");
         try{
-            //Content-Type: text/html
-            String line = "Content-Type: text/html";
-            System.out.println("响应头:"+line);
-            println(line);
-            //Content-Length: xxxx
-            line = "Content-Length: "+entity.length();
-            System.out.println("响应头："+line);
-            println(line);
+            //3.2发送响应头
+            Set<Map.Entry<String,String >> set = headers.entrySet();
+            for (Map.Entry<String,String> e : set) {
+                String name = e.getKey();//响应头名字
+                String value = e.getValue();//响应头的值
+                String line = name + ": " + value;
+                System.out.println("响应头:"+line);
+                println(line);
+            }
             //单独发送回车符换行符表示响应头部分发送完毕
             println("");
         } catch (Exception e) {
@@ -106,6 +114,15 @@ public class HttpResponse {
         out.write(data);
         out.write(13);
         out.write(10);
+    }
+
+    /**
+     * 添加一个要发送的响应头
+     * @param name 响应头的名字
+     * @param value 响应头对应的值
+     */
+    public void putHeader(String name,String value){
+        this.headers.put(name,value);
     }
 
     public int getStatusCode() {

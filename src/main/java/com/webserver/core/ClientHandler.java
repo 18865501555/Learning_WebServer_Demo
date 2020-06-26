@@ -40,27 +40,9 @@ public class ClientHandler implements Runnable{
             System.out.println("抽象路径:"+path);
             File file = new File("./src/main/webapp"+path);
             //判断用户请求的资源是否真实存在
-            if (file.exists()){
+            if (file.exists()&&file.isFile()){
                 System.out.println("资源已找到!");
                 response.setEntity(file);
-                //根据用户请求的资源文件名字来获取后缀名
-                String fileName = file.getName();
-                //从文件名最后一个"."之后第一个字符开始截取到末尾
-                String ext = fileName.substring(fileName.lastIndexOf(".")+1);
-                //key:资源后缀名 value:Content-Type对应的值
-                Map<String,String> mimeMapping = new HashMap<>();
-                mimeMapping.put("html","text/html");
-                mimeMapping.put("css","text/css");
-                mimeMapping.put("js","application/javascript");
-                mimeMapping.put("png","image/png");
-                mimeMapping.put("gif","image/gif");
-                mimeMapping.put("jpg","image/jpeg");
-
-                String type = mimeMapping.get(ext);
-
-                response.putHeader("Content-Type",type);
-                response.putHeader("Content-Length",file.length()+"");
-
             } else {
                 //不存在则响应404给客户端
                 //设置状态代码为404
@@ -69,8 +51,6 @@ public class ClientHandler implements Runnable{
                 response.setStatusReson("NotFound");
                 File notFound = new File("./src/main/webapp/root/404.html");
                 response.setEntity(notFound);
-                response.putHeader("Content-Type","text/html");
-                response.putHeader("Content-Length",notFound.length()+"");
             }
             //3响应客户端
             response.flush();

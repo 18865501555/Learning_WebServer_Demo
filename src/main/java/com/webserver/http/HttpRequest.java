@@ -2,7 +2,9 @@ package com.webserver.http;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.Socket;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -113,6 +115,13 @@ public class HttpRequest {
             requestURI = data[0];
             if (data.length>1){
                 queryString = data[1];
+                try {
+                    //将参数部分中%XX解码
+                    queryString = URLDecoder.decode(queryString,"UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                //进一步拆分参数
                 data = queryString.split("&");
                 for (String line : data
                      ) {

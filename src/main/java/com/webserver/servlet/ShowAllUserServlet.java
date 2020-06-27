@@ -19,7 +19,7 @@ import java.util.Map;
  * @author orange
  * @create 2020-06-27 7:50 下午
  */
-public class ShowAllUserServlet {
+public class ShowAllUserServlet extends HttpServlet{
     public void service(HttpRequest request, HttpResponse response){
         System.out.println("ShowAllUserServlet:开始工作...");
         /*

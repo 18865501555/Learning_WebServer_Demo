@@ -10,7 +10,7 @@ import java.io.RandomAccessFile;
  * @author orange
  * @create 2020-06-27 2:55 下午
  */
-public class LoginServlet {
+public class LoginServlet extends HttpServlet{
     public void service(HttpRequest request, HttpResponse response){
         System.out.println("LoginServlet:用户开始登陆...");
         String username = request.getParameter("username");

@@ -11,7 +11,7 @@ import java.util.Arrays;
  * @author orange
  * @create 2020-06-27 12:59 下午
  */
-public class RegServlet {
+public class RegServlet extends HttpServlet{
     public void service(HttpRequest request,HttpResponse response){
         System.out.println("RegServlet:开始用户注册...");
         /*

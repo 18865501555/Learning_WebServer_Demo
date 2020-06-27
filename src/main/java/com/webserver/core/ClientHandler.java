@@ -3,10 +3,7 @@ package com.webserver.core;
 import com.webserver.http.EmptyRequestException;
 import com.webserver.http.HttpRequest;
 import com.webserver.http.HttpResponse;
-import com.webserver.servlet.CreateQRServlet;
-import com.webserver.servlet.LoginServlet;
-import com.webserver.servlet.RegServlet;
-import com.webserver.servlet.ShowAllUserServlet;
+import com.webserver.servlet.*;
 
 import java.io.*;
 import java.net.Socket;
@@ -42,17 +39,9 @@ public class ClientHandler implements Runnable{
              */
             String path = request.getRequestURI();
             System.out.println("抽象路径:" + path);
-            if ("/myweb/reg".equals(path)) {
-                RegServlet servlet = new RegServlet();
-                servlet.service(request, response);
-            }else if("/myweb/login".equals(path)) {
-                LoginServlet servlet = new LoginServlet();
-                servlet.service(request, response);
-            }else if("/myweb/createQR".equals(path)) {
-                CreateQRServlet servlet = new CreateQRServlet();
-                servlet.service(request, response);
-            }else if("/myweb/showAllUser.html".equals(path)){
-                ShowAllUserServlet servlet = new ShowAllUserServlet();
+            //判断用户是否请求业务处理
+            HttpServlet servlet = ServerContext.getServlet(path);
+            if (servlet!=null){
                 servlet.service(request,response);
             }else {
                 File file = new File("./src/main/webapp" + path);

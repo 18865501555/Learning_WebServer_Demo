@@ -11,7 +11,7 @@ import java.io.ByteArrayOutputStream;
  * @author orange
  * @create 2020-06-27 5:00 下午
  */
-public class CreateQRServlet {
+public class CreateQRServlet extends HttpServlet{
     public void service(HttpRequest request, HttpResponse response){
         System.out.println("CreateQRServlet:开始生成二维码...");
         try(

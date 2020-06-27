@@ -22,7 +22,10 @@ public class HttpRequest {
     private String method;//请求方式
     private String uri;//抽象路径
     private String protocol;//协议版本
-
+    private String requestURI;//保存uri中?左侧的请求部分
+    private String queryString;//保存uri中?右侧的参数部分
+    //保存queryString中每一个参数，key参数名，value参数值
+    private Map<String,String> parameters = new HashMap<>();
     //消息头相关信息
     private Map<String,String> headers = new HashMap<>();
     //消息正文相关信息
@@ -72,6 +75,7 @@ public class HttpRequest {
             method = data[0];
             uri = data[1];
             protocol = data[2];
+            parseUri();//进一步解析uri
         } catch (EmptyRequestException e){
             //如果是空请求异常，对外抛出给构造方法
             throw e;
@@ -84,6 +88,53 @@ public class HttpRequest {
 
         System.out.println("HttpRequest:解析请求行完毕!");
     }
+
+    /**
+     * 进一步解析uri
+     */
+    private void parseUri(){
+        /*
+        uri的值由于用户操作不同有两种情况
+        1：不带参数的，比如：/myweb/index.html
+           对于这样的情况，直接将uri的值赋值给requestURI即可
+           因为不含有参数，所以quertString和parameters不需要
+           做任何操作
+        2：带参数的，比如/myweb/reg?username=zs&password=...
+           对于这样的情况，我们需要拆分，需要做如下操作
+           首先将uri按照？拆分为两部分。？左侧为请求部分，赋值给
+           属性requestURI。"？"右侧为参数部分，赋值为属性queryString
+           然后在将queryString进一步拆分，按照&拆分出每一个参数
+           然后每个参数再按照=拆分为参数名和参数值
+           并将参数名作为key，参数值作为value保存到parameters
+           这个Map中，完成解析工作
+         */
+        if (uri.indexOf("?")!=-1){
+            String[] data = uri.split("\\?");
+            requestURI = data[0];
+            if (data.length>1){
+                queryString = data[1];
+                data = queryString.split("&");
+                for (String line : data
+                     ) {
+                    String[] arr = line.split("=");
+                    if(arr.length>1){
+                        parameters.put(arr[0],arr[1]);
+                    }else{
+                        parameters.put(arr[0],null);
+                    }
+                }
+            }
+        }else{
+            requestURI = uri;
+        }
+        System.out.println("requestURI:"+requestURI);
+        System.out.println("queryString:"+queryString);
+        System.out.println("parameters:"+parameters);
+    }
+
+    /**
+     * 解析消息头
+     */
     private void parseHeaders(){
         System.out.println("HttpRequest:开始解析消息头...");
         try{
@@ -112,8 +163,8 @@ public class HttpRequest {
         System.out.println("所有消息头:"+headers);
         System.out.println("HttpRequest:解析消息头完毕!");
     }
-    /*
-    解析消息正文
+    /**
+     * 解析消息正文
      */
     private void parseContent(){
         System.out.println("HttpRequest:开始解析消息正文...");
@@ -148,5 +199,16 @@ public class HttpRequest {
     }
     public String getHeader(String name){
         return headers.get(name);
+    }
+
+    public String getRequestURI() {
+        return requestURI;
+    }
+
+    public String getQueryString() {
+        return queryString;
+    }
+    public String getParameter(String name){
+        return parameters.get(name);
     }
 }

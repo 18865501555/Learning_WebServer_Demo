@@ -3,6 +3,7 @@ package com.webserver.core;
 import com.webserver.http.EmptyRequestException;
 import com.webserver.http.HttpRequest;
 import com.webserver.http.HttpResponse;
+import com.webserver.servlet.CreateQRServlet;
 import com.webserver.servlet.LoginServlet;
 import com.webserver.servlet.RegServlet;
 
@@ -43,8 +44,11 @@ public class ClientHandler implements Runnable{
             if ("/myweb/reg".equals(path)) {
                 RegServlet servlet = new RegServlet();
                 servlet.service(request, response);
-            }else if("/myweb/login".equals(path)){
+            }else if("/myweb/login".equals(path)) {
                 LoginServlet servlet = new LoginServlet();
+                servlet.service(request, response);
+            }else if("/myweb/createQR".equals(path)){
+                CreateQRServlet servlet = new CreateQRServlet();
                 servlet.service(request,response);
             }else {
                 File file = new File("./src/main/webapp" + path);

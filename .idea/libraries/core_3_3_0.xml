@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="core-3.3.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/main/lib/core-3.3.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/lib/jai-imageio-core-1.3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/lib/javase-3.3.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/lib/jcommander-1.48.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/lib/QRCode.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

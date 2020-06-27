@@ -26,6 +26,7 @@ public class HttpResponse {
     private Map<String,String> headers = new HashMap<>();
     //响应正文相关信息
     private File entity;
+    private byte[] data;
     private Socket socket;
     private OutputStream out;
 
@@ -96,16 +97,24 @@ public class HttpResponse {
      */
     private void sendContent(){
         System.out.println("HttpResponse:开始发送响应正文...");
-        try(
-            FileInputStream fis = new FileInputStream(entity);
-        ){
-            int len = 0;
-            byte[] buf = new byte[1024*10];
-            while ((len = fis.read(buf))!=-1){
-                out.write(buf,0,len);
+        if (data!=null) {
+            try {
+                out.write(data);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (Exception e){
-            e.printStackTrace();
+        }else if(entity!=null){
+            try(
+                FileInputStream fis = new FileInputStream(entity);
+            ){
+                int len = 0;
+                byte[] buf = new byte[1024*10];
+                while ((len = fis.read(buf))!=-1){
+                    out.write(buf,0,len);
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            }
         }
         System.out.println("HttpResponse:发送响应正文完毕!");
     }
@@ -145,7 +154,28 @@ public class HttpResponse {
         return entity;
     }
 
+    /**
+     * 将一个文件作为正文内容设置到正文上，设置文件的同时会自动根据文件添加响应头：
+     * Content-Type和Content-Length
+     * @param entity
+     */
     public void setEntity(File entity) {
         this.entity = entity;
+        //根据用户请求的资源文件名字来获取后缀名
+        String fileName = entity.getName();
+        //从文件名最后一个"."之后第一个字符开始截取到末尾
+        String ext = fileName.substring(fileName.lastIndexOf(".")+1);
+        String type = HttpContext.getMimeType(ext);
+        putHeader("Content-Type",type);
+        putHeader("Content-Length",entity.length()+"");
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
+        putHeader("Content-Length", data.length+"");
     }
 }

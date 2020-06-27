@@ -3,6 +3,8 @@ package com.webserver.core;
 import com.webserver.http.EmptyRequestException;
 import com.webserver.http.HttpRequest;
 import com.webserver.http.HttpResponse;
+import com.webserver.servlet.LoginServlet;
+import com.webserver.servlet.RegServlet;
 
 import java.io.*;
 import java.net.Socket;
@@ -36,21 +38,30 @@ public class ClientHandler implements Runnable{
             /*
             通过请求对象获取抽象路径
              */
-            String path = request.getUri();
-            System.out.println("抽象路径:"+path);
-            File file = new File("./src/main/webapp"+path);
-            //判断用户请求的资源是否真实存在
-            if (file.exists()&&file.isFile()){
-                System.out.println("资源已找到!");
-                response.setEntity(file);
-            } else {
-                //不存在则响应404给客户端
-                //设置状态代码为404
-                System.out.println("资源不存在!");
-                response.setStatusCode(404);
-                response.setStatusReson("NotFound");
-                File notFound = new File("./src/main/webapp/root/404.html");
-                response.setEntity(notFound);
+            String path = request.getRequestURI();
+            System.out.println("抽象路径:" + path);
+            if ("/myweb/reg".equals(path)) {
+                RegServlet servlet = new RegServlet();
+                servlet.service(request, response);
+            }else if("/myweb/login".equals(path)){
+                LoginServlet servlet = new LoginServlet();
+                servlet.service(request,response);
+            }else {
+                File file = new File("./src/main/webapp" + path);
+
+                //判断用户请求的资源是否真实存在
+                if (file.exists()&&file.isFile()){
+                    System.out.println("资源已找到!");
+                    response.setEntity(file);
+                } else {
+                    //不存在则响应404给客户端
+                    //设置状态代码为404
+                    System.out.println("资源不存在!");
+                    response.setStatusCode(404);
+                    response.setStatusReson("NotFound");
+                    File notFound = new File("./src/main/webapp/root/404.html");
+                    response.setEntity(notFound);
+                }
             }
             //3响应客户端
             response.flush();

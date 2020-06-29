@@ -3,5 +3,5 @@
     <servlet path="/myweb/reg" className="com.webserver.servlet.RegServlet"/>
     <servlet path="/myweb/login" className="com.webserver.servlet.LoginServlet"/>
     <servlet path="/myweb/createQR" className="com.webserver.servlet.CreateQRServlet"/>
-    <servlet path="/myweb/showAllUser.html" className="com.webserver.servlet.ShowAllUserServlet"/>
+    <servlet path="/myweb/showAllUser" className="com.webserver.servlet.ShowAllUserServlet"/>
 </servlets>
